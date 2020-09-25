@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Sep 25 15:01:29 2020
+
+@author: sjoerd
+"""
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# my username and password
+username=""
+password=""
+
+safemode=1;#to nnot submit the papers yet, only save draft
+
+# project for which I want to add papers
+driver = webdriver.Firefox()
+
+## navigate to NWO ISAAC, login
+driver.get("https://www.isaac.nwo.nl/nl/home")
+
+driver.find_element_by_id("_58_login").send_keys(username)
+password_field  = driver.find_element_by_id("_58_password")
+password_field.send_keys(password)
+password_field.submit()
+
+
+# go to the projects page
+WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Projects')]")))
+driver.find_element_by_xpath("//*[contains(text(), 'Projects')]").click()
+
+## go into the project you want to add publications to 
+WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'stable pattern')]")))
+driver.find_element_by_xpath("//*[contains(text(), 'stable pattern')]").click()
+
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Product_1")))
+driver.find_element_by_id("Product_1").click()
+
+# start adding. This is where a loop should start also. 
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1")))
+driver.find_element_by_id("Toevoegen_1").click()
+
+# scientific article
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "WetenschapelijkArtikel_1")))
+driver.find_element_by_id("WetenschapelijkArtikel_1").click()
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "WetenschappelijkArtikel-Titel_1")))
+driver.find_element_by_id("WetenschappelijkArtikel-Titel_1").
+
+
+# add authors (should be loop)
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1'")))
+driver.find_element_by_id("Toevoegen_1").click()
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ProductBetrokkenheid-Voorletters_1")))
+driver.find_element_by_id("ProductBetrokkenheid-Voorletters_1").
+driver.find_element_by_id("ProductBetrokkenheid-Achternaam_1").
+
+
+
+
