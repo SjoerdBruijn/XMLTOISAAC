@@ -17,7 +17,6 @@ password=""
 
 safemode=1;#to nnot submit the papers yet, only save draft
 
-# project for which I want to add papers
 driver = webdriver.Firefox()
 
 ## navigate to NWO ISAAC, login
