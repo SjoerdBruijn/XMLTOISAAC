@@ -96,7 +96,10 @@ driver.find_element_by_id("Product_1").click()
 # start adding. This is where a loop should start also.
 for i_paper in range(len(papers['paper'])):
 # i_paper=1
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1")))
+    if i_paper==0:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1")))
+    else:
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Verwijderen_1")))
     driver.find_element_by_id("Toevoegen_1").click()
 
     # scientific article
@@ -111,7 +114,7 @@ for i_paper in range(len(papers['paper'])):
     for i_author in range(len(papers['paper'][0,i_paper]['authors'])):
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Toevoegen_1")))
         driver.find_element_by_id("Toevoegen_1").click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ProductBetrokkenheid-Voorletters_1")))
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "ProductBetrokkenheid-Voorletters_1")))
         driver.find_element_by_id("ProductBetrokkenheid-Voorletters_1").send_keys(papers['paper'][0,i_paper]['authors'][0,i_author]['initials'])
         driver.find_element_by_id("ProductBetrokkenheid-Achternaam_1").send_keys(papers['paper'][0,i_paper]['authors'][0,i_author]['surname'])
         WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Verder_2")))
@@ -120,7 +123,7 @@ for i_paper in range(len(papers['paper'])):
     #refereed
 
     #journal
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "WetenschappelijkArtikel-TitelTijdschrift_1")))
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-TitelTijdschrift_1")))
     driver.find_element_by_id("WetenschappelijkArtikel-TitelTijdschrift_1").send_keys(papers['paper'][0,i_paper]['journal'])
 
     #year
@@ -138,9 +141,11 @@ for i_paper in range(len(papers['paper'])):
     #type
 
     #doi
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
     driver.find_element_by_id("WetenschappelijkArtikel-OpenAccesUrl_1").send_keys(papers['paper'][0,i_paper]['url'])
 
     # submit record
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Opslaan_concept_en_sluiten_1")))
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Opslaan_concept_en_sluiten_1")))
     driver.find_element_by_id("Opslaan_concept_en_sluiten_1").click()
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Opslaan_concept_en_sluiten_1")))
     driver.find_element_by_id("Opslaan_concept_en_sluiten_1").click()
