@@ -13,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import xml.dom.minidom
 
 
-## loading from xml, note, this should become a function. 
+## loading from xml, note, this should become a function.
 filename = 'testdata.xml'
 dom     = xml.dom.minidom.parse(filename)
 records = dom.getElementsByTagName('record')
@@ -53,6 +53,7 @@ for i_paper in range(len(records)):
 # my username and password
 username=input("Enter your username:")
 password=input("Enter your password:")
+project_id='016.Vidi.178.014'
 
 safemode=1;#to nnot submit the papers yet, only save draft
 
@@ -72,8 +73,9 @@ WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//*
 driver.find_element_by_xpath("//*[contains(text(), 'Projects')]").click()
 
 ## go into the project you want to add publications to
-WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'stable pattern')]")))
-driver.find_element_by_xpath("//*[contains(text(), 'stable pattern')]").click()
+project_id="//*[contains(text(),'"+ project_id+"')]"
+WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, project_id)))
+driver.find_element_by_xpath(project_id).click()
 
 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Product_1")))
 driver.find_element_by_id("Product_1").click()
