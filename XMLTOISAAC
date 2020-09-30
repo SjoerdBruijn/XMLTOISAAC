@@ -10,10 +10,49 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import xml.dom.minidom
+
+
+## loading from xml, note, this should become a function. 
+filename = 'testdata.xml'
+dom     = xml.dom.minidom.parse(filename)
+records = dom.getElementsByTagName('record')
+
+papers  = dict()
+papers['paper']=dict()
+
+for i_paper in range(len(records)):
+    papers['paper'][0,i_paper] = dict()
+    papers['paper'][0,i_paper]['authors']=dict();
+    papers['paper'][0,i_paper]['title'] = records[i_paper].getElementsByTagName('title')[0].getElementsByTagName('style')[0].firstChild.data
+#    papers['paper'][0,i_paper]['journal']
+#    papers['paper'][0,i_paper]['year']
+#    papers['paper'][0,i_paper]['issue']
+#    papers['paper'][0,i_paper]['first_page']
+#    papers['paper'][0,i_paper]['last_page']
+#    papers['paper'][0,i_paper]['url']
+    recordauthors = records[i_paper].getElementsByTagName('author')
+
+
+    for i_author in range(len(recordauthors)):
+        authorname = recordauthors[i_author].getElementsByTagName('style')[0].firstChild.data
+        papers['paper'][0,i_paper]['authors'][0,i_author]=dict()
+        papers['paper'][0,i_paper]['authors'][0,i_author]['surname'] =authorname.split(',')[0]
+        initials=authorname.split(',')[1]
+        if len(initials.split('.')[0])>2:
+            initialsnw=''
+            for i_ini in range(len(initials.split(' '))-1):
+                initialsnw=initialsnw+initials.split(' ')[i_ini+1][0]
+                initialsnw=initialsnw+('. ')
+            initials=initialsnw
+#        print(initials)
+#        print(authorname.split(',')[0] )
+        papers['paper'][0,i_paper]['authors'][0,i_author]['initials']=initials
+
 
 # my username and password
-username=""
-password=""
+username=input("Enter your username:")
+password=input("Enter your password:")
 
 safemode=1;#to nnot submit the papers yet, only save draft
 
@@ -32,31 +71,57 @@ password_field.submit()
 WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Projects')]")))
 driver.find_element_by_xpath("//*[contains(text(), 'Projects')]").click()
 
-## go into the project you want to add publications to 
+## go into the project you want to add publications to
 WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'stable pattern')]")))
 driver.find_element_by_xpath("//*[contains(text(), 'stable pattern')]").click()
 
 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Product_1")))
 driver.find_element_by_id("Product_1").click()
 
-# start adding. This is where a loop should start also. 
+# start adding. This is where a loop should start also.
+#for i_paper in range(len(papers['paper'])):
+i_paper=1
 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1")))
 driver.find_element_by_id("Toevoegen_1").click()
 
 # scientific article
 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "WetenschapelijkArtikel_1")))
 driver.find_element_by_id("WetenschapelijkArtikel_1").click()
+
+#title
 WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "WetenschappelijkArtikel-Titel_1")))
-driver.find_element_by_id("WetenschappelijkArtikel-Titel_1").
+driver.find_element_by_id("WetenschappelijkArtikel-Titel_1").send_keys(papers['paper'][0,i_paper]['title'])
 
 
 # add authors (should be loop)
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1'")))
-driver.find_element_by_id("Toevoegen_1").click()
-WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ProductBetrokkenheid-Voorletters_1")))
-driver.find_element_by_id("ProductBetrokkenheid-Voorletters_1").
-driver.find_element_by_id("ProductBetrokkenheid-Achternaam_1").
+print(range(len(papers['paper'][0,i_paper]['authors'])))
+for i_author in range(len(papers['paper'][0,i_paper]['authors'])):
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Toevoegen_1")))
+    driver.find_element_by_id("Toevoegen_1").click()
+    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "ProductBetrokkenheid-Voorletters_1")))
+    driver.find_element_by_id("ProductBetrokkenheid-Voorletters_1").send_keys(papers['paper'][0,i_paper]['authors'][0,i_author]['initials'])
+    driver.find_element_by_id("ProductBetrokkenheid-Achternaam_1").send_keys(papers['paper'][0,i_paper]['authors'][0,i_author]['surname'])
+    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Verder_2")))
+    driver.find_element_by_id("Verder_2").click()
 
 
 
+#refereed
 
+#journal
+
+#year
+
+#issue
+
+#start page
+
+#end page
+
+#type
+
+#doi
+
+
+
+driver.find_element_by_id("Opslaan_concept_en_sluiten_2").click()
