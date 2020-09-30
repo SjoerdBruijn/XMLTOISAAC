@@ -18,16 +18,32 @@ papers['paper']=dict()
 for i_paper in range(len(records)):
     papers['paper'][0,i_paper] = dict()
     papers['paper'][0,i_paper]['authors']=dict();
-    papers['paper'][0,i_paper]['title'] = records[i_paper].getElementsByTagName('title')[0].getElementsByTagName('style')[0].firstChild.data
-#    papers['paper'][0,i_paper]['journal'] 
-#    papers['paper'][0,i_paper]['year'] 
-#    papers['paper'][0,i_paper]['issue'] 
-#    papers['paper'][0,i_paper]['first_page'] 
-#    papers['paper'][0,i_paper]['last_page'] 
-#    papers['paper'][0,i_paper]['url'] 
-    recordauthors = records[i_paper].getElementsByTagName('author')
+    papers['paper'][0,i_paper]['title']     = records[i_paper].getElementsByTagName('title')[0].getElementsByTagName('style')[0].firstChild.data
+    papers['paper'][0,i_paper]['journal']   = records[i_paper].getElementsByTagName('full-title')[0].getElementsByTagName('style')[0].firstChild.data
+    papers['paper'][0,i_paper]['year']      = records[i_paper].getElementsByTagName('year')[0].getElementsByTagName('style')[0].firstChild.data
+    voldat = records[i_paper].getElementsByTagName('volume')
+    vol=''
+    if len(voldat)>0:
+        vol=voldat[0].getElementsByTagName('style')[0].firstChild.data   
+    papers['paper'][0,i_paper]['issue']     = vol
     
-   
+    pagedat = records[i_paper].getElementsByTagName('pages')
+    pages=' - '
+    if len(pagedat)>0:
+        pages=pagedat[0].getElementsByTagName('style')[0].firstChild.data     
+        if len(pages.split('-'))<2:
+            pages=pages+'- '
+        
+    papers['paper'][0,i_paper]['first_page']    = pages.split('-')[0]
+    papers['paper'][0,i_paper]['last_page']     = pages.split('-')[1]
+    
+    urldat=records[i_paper].getElementsByTagName('electronic-resource-num')
+    urltxt=''
+    if len(urldat)>0:
+        urltxt=urldat[0].getElementsByTagName('style')[0].firstChild.data
+    papers['paper'][0,i_paper]['url']           = urltxt
+    
+    recordauthors = records[i_paper].getElementsByTagName('author')
     for i_author in range(len(recordauthors)):
         authorname = recordauthors[i_author].getElementsByTagName('style')[0].firstChild.data
         papers['paper'][0,i_paper]['authors'][0,i_author]=dict()
@@ -39,6 +55,4 @@ for i_paper in range(len(records)):
                 initialsnw=initialsnw+initials.split(' ')[i_ini+1][0]
                 initialsnw=initialsnw+('. ')
             initials=initialsnw
-        print(initials)             
-        print(authorname.split(',')[0] )
         papers['paper'][0,i_paper]['authors'][0,i_author]['initials']=initials
