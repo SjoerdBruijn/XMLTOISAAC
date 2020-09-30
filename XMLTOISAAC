@@ -142,6 +142,8 @@ for i_paper in range(len(papers['paper'])):
 
     #doi
     WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
+    print(papers['paper'][0,i_paper]['url'])
+    driver.find_element_by_id("WetenschappelijkArtikel-OpenAccesUrl_1").click()
     driver.find_element_by_id("WetenschappelijkArtikel-OpenAccesUrl_1").send_keys(papers['paper'][0,i_paper]['url'])
 
     # submit record
