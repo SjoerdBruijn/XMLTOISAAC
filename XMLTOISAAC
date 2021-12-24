@@ -70,7 +70,7 @@ for i_paper in range(len(records)):
 
 
 
-driver = webdriver.Firefox()
+driver = webdriver.Chrome()
 
 ## navigate to NWO ISAAC, login
 driver.get("https://www.isaac.nwo.nl/nl/home")
