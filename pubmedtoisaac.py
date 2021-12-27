@@ -6,9 +6,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 ## settings to change
 safemode        = 1 #immidiately submit or not; recommended to not, leave at 1
-Entrez.email    = 's.m.bruijn@gmail.com'
-query           ='bruijn s.m.'
-select_year     = 2021
+Entrez.email    ='s.m.bruijn@gmail.com' # your email is used for pubmed to contact you if you use their api to heavily
+query           ='bruijn s.m.' # search query in pubmed. Note that no comma is required
+select_year     = 2021 #publications from which year should be fed to isaac
 
 ## get data from pubmed
 handle = Entrez.esearch(db='pubmed', sort='year',retmax='200', retmode='xml', term=query)
@@ -21,7 +21,7 @@ papers          = dict()
 papers['paper'] = dict()
 i_paper         = 0
 for article in results2['PubmedArticle']:
-    print(article['MedlineCitation']['Article']['ArticleTitle'])
+    # print(article['MedlineCitation']['Article']['ArticleTitle'])
     papers['paper'][0, i_paper] = dict()
     papers['paper'][0, i_paper]['authors']  = dict()
     papers['paper'][0, i_paper]['title']    = article['MedlineCitation']['Article']['ArticleTitle']
@@ -47,7 +47,7 @@ for article in results2['PubmedArticle']:
     recordauthors = article['MedlineCitation']['Article']['AuthorList']
     i_author=0
     for author in recordauthors:
-        print(author['LastName'])
+        # print(author['LastName'])
         papers['paper'][0, i_paper]['authors'][0, i_author] = dict()
         papers['paper'][0, i_paper]['authors'][0, i_author]['surname']  = author['LastName']
         papers['paper'][0, i_paper]['authors'][0, i_author]['initials'] = author['Initials']
@@ -80,78 +80,76 @@ driver.find_element_by_xpath("//*[contains(text(), 'Projects')]").click()
 project_id="//*[contains(text(),'"+ project_id+"')]"
 WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, project_id)))
 driver.find_element_by_xpath(project_id).click()
-
 WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Product_1")))
 driver.find_element(By.ID,"Product_1").click()
 
 # start adding. This is where a loop should start also.
-for i_paper in range(0,5):#range(len(papers['paper'])):
+for i_paper in range(len(papers['paper'])):
 # i_paper=1
-    if i_paper==0:
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1")))
-    else:
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Verwijderen_1")))
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Toevoegen_1")))
-    driver.find_element(By.ID,"Toevoegen_1").click()
-
-    # scientific article
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "WetenschapelijkArtikel_1")))
-    driver.find_element(By.ID,"WetenschapelijkArtikel_1").click()
-
-    #title
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "WetenschappelijkArtikel-Titel_1")))
-    driver.find_element(By.ID,"WetenschappelijkArtikel-Titel_1").send_keys(papers['paper'][0,i_paper]['title'])
-
-
-
-    #refereed
-
-    #journal
-    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-TitelTijdschrift_1")))
-    driver.find_element(By.ID,"WetenschappelijkArtikel-TitelTijdschrift_1").send_keys(papers['paper'][0,i_paper]['journal'])
-
-    #year
-    driver.find_element(By.ID,"WetenschappelijkArtikel-UitgaveJaar_1").send_keys(papers['paper'][0,i_paper]['year'])
-
-    #issue
-    driver.find_element(By.ID,"WetenschappelijkArtikel-Nummer_1").send_keys(papers['paper'][0,i_paper]['issue'])
-
-    #start page
-    driver.find_element(By.ID,"WetenschappelijkArtikel-Beginpagina_1").send_keys(papers['paper'][0,i_paper]['first_page'])
-
-    #end page
-    driver.find_element(By.ID,"WetenschappelijkArtikel-Eindpagina_1").send_keys(papers['paper'][0,i_paper]['last_page'])
-
-    #type
-
-    #doi
-    # WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
-    # print(papers['paper'][0,i_paper]['url'])
-    # driver.find_element(By.ID,"WetenschappelijkArtikel-OpenAccesUrl_1").click()
-    urlnotinserted=1
-    while urlnotinserted:
-        try:
-            WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
-            driver.find_element(By.ID,"WetenschappelijkArtikel-OpenAccesUrl_1").send_keys(papers['paper'][0,i_paper]['url'])
-            urlnotinserted = 0
-        except:
-            urlnotinserted = 1
-            print('failed submitting url, trying again')
-
-# add authors (should be loop)
-    for i_author in range(len(papers['paper'][0, i_paper]['authors'])):
+    if int(papers['paper'][0,i_paper]['year'])==select_year:
+        print(papers['paper'][0,i_paper]['title'])
+        if i_paper==0:
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "Toevoegen_1")))
+        else:
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Verwijderen_1")))
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Toevoegen_1")))
         driver.find_element(By.ID,"Toevoegen_1").click()
-        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "ProductBetrokkenheid-Voorletters_1")))
-        driver.find_element(By.ID,"ProductBetrokkenheid-Voorletters_1").send_keys(
-            papers['paper'][0, i_paper]['authors'][0, i_author]['initials'])
-        driver.find_element(By.ID,"ProductBetrokkenheid-Achternaam_1").send_keys(
-            papers['paper'][0, i_paper]['authors'][0, i_author]['surname'])
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Verder_2")))
-        driver.find_element(By.ID,"Verder_2").click()
 
-    # submit record
-    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Opslaan_concept_en_sluiten_1")))
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Opslaan_concept_en_sluiten_1")))
-    driver.find_element(By.ID,"Opslaan_concept_en_sluiten_1").click()
-    # driver.find_element(By.ID,"Opslaan_concept_en_sluiten_1").click()
+        # scientific article
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "WetenschapelijkArtikel_1")))
+        driver.find_element(By.ID,"WetenschapelijkArtikel_1").click()
+
+        #title
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "WetenschappelijkArtikel-Titel_1")))
+        driver.find_element(By.ID,"WetenschappelijkArtikel-Titel_1").send_keys(papers['paper'][0,i_paper]['title'])
+
+
+
+        #refereed
+
+        #journal
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-TitelTijdschrift_1")))
+        driver.find_element(By.ID,"WetenschappelijkArtikel-TitelTijdschrift_1").send_keys(papers['paper'][0,i_paper]['journal'])
+
+        #year
+        driver.find_element(By.ID,"WetenschappelijkArtikel-UitgaveJaar_1").send_keys(papers['paper'][0,i_paper]['year'])
+
+        #issue
+        driver.find_element(By.ID,"WetenschappelijkArtikel-Nummer_1").send_keys(papers['paper'][0,i_paper]['issue'])
+
+        #start page
+        driver.find_element(By.ID,"WetenschappelijkArtikel-Beginpagina_1").send_keys(papers['paper'][0,i_paper]['first_page'])
+
+        #end page
+        driver.find_element(By.ID,"WetenschappelijkArtikel-Eindpagina_1").send_keys(papers['paper'][0,i_paper]['last_page'])
+
+        #type
+
+        #doi
+        urlnotinserted=1
+        while urlnotinserted:
+            try:
+                WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
+                driver.find_element(By.ID,"WetenschappelijkArtikel-OpenAccesUrl_1").send_keys(papers['paper'][0,i_paper]['url'])
+                urlnotinserted = 0
+            except:
+                urlnotinserted = 1
+                print('failed submitting url, trying again')
+
+        # add authors (should be loop)
+        for i_author in range(len(papers['paper'][0, i_paper]['authors'])):
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Toevoegen_1")))
+            driver.find_element(By.ID,"Toevoegen_1").click()
+            WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "ProductBetrokkenheid-Voorletters_1")))
+            driver.find_element(By.ID,"ProductBetrokkenheid-Voorletters_1").send_keys(
+                papers['paper'][0, i_paper]['authors'][0, i_author]['initials'])
+            driver.find_element(By.ID,"ProductBetrokkenheid-Achternaam_1").send_keys(
+                papers['paper'][0, i_paper]['authors'][0, i_author]['surname'])
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Verder_2")))
+            driver.find_element(By.ID,"Verder_2").click()
+
+        # submit record
+        WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "Opslaan_concept_en_sluiten_1")))
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Opslaan_concept_en_sluiten_1")))
+        driver.find_element(By.ID,"Opslaan_concept_en_sluiten_1").click()
+        # driver.find_element(By.ID,"Opslaan_concept_en_sluiten_1").click()
