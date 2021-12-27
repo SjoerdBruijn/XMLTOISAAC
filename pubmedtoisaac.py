@@ -125,13 +125,20 @@ for i_paper in range(0,5):#range(len(papers['paper'])):
     #type
 
     #doi
-    WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
+    # WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
     # print(papers['paper'][0,i_paper]['url'])
     # driver.find_element(By.ID,"WetenschappelijkArtikel-OpenAccesUrl_1").click()
-    driver.find_element(By.ID,"WetenschappelijkArtikel-OpenAccesUrl_1").send_keys(papers['paper'][0,i_paper]['url'])
+    urlnotinserted=1
+    while urlnotinserted:
+        try:
+            WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.ID, "WetenschappelijkArtikel-OpenAccesUrl_1")))
+            driver.find_element(By.ID,"WetenschappelijkArtikel-OpenAccesUrl_1").send_keys(papers['paper'][0,i_paper]['url'])
+            urlnotinserted = 0
+        except:
+            urlnotinserted = 1
+            print('failed submitting url, trying again')
 
-    # add authors (should be loop)
+# add authors (should be loop)
     for i_author in range(len(papers['paper'][0, i_paper]['authors'])):
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "Toevoegen_1")))
         driver.find_element(By.ID,"Toevoegen_1").click()
